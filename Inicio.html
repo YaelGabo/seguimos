@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Login Page</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='./Estilos/estilos.css'>
+</head>
+<body>
+    <div class="container">
+        <div class="image-box">
+            <img src="Imagenes/Hospital.png" alt="Imagen de fondo">
+        </div>
+        <div class="login-box">
+            <h2>Login</h2>
+            <form action="PHP/inicio.php" method="post" onsubmit="return verificarUsuario()">
+                <div class="user-box">
+                    <input type="text" name="username" id="username" required="">
+                    <label>Username</label>
+                </div>
+                <div class="user-box">
+                    <input type="password" name="password" required="">
+                    <label>Password</label>
+                </div>
+                <button type="submit" class="submit-button">Submit</button>
+                <!-- Nueva sección para registrarse -->
+                <div class="extra-options">
+                    <a href="./Paginas/Registrarse.html" class="animated-link">Registrarse</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function verificarUsuario() {
+            const username = document.getElementById("username").value;
+            if (!username.startsWith("U") && !username.startsWith("A")) {
+                alert("El nombre de usuario debe comenzar con 'U' para usuarios o 'A' para administradores.");
+                return false; // Evita el envío del formulario
+            }
+            return true; // Permite el envío si el prefijo es correcto
+        }
+    </script>
+</body>
+</html>
