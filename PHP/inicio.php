@@ -1,4 +1,9 @@
-<?php 
+<?php
+// Iniciar sesión si aún no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Datos de conexión a la base de datos
 $servername = "localhost:3306";
 $username = "root";
@@ -13,43 +18,45 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Recoger los datos del formulario
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nombreUsuario = $_POST['username'];
-    $contrasena = $_POST['password'];
+// Procesar formulario de inicio de sesión
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombreUsuario = $_POST['username'] ?? '';
+    $contrasena = $_POST['password'] ?? '';
 
-    // Verificar si el usuario existe en la base de datos
-    $sql = "SELECT contrasena FROM usuarios WHERE nombreUsuario = ?";
+    // Buscar usuario por nombre
+    $sql = "SELECT id, contrasena FROM usuarios WHERE nombreUsuario = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $nombreUsuario);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        // Usuario encontrado, verificar contraseña
-        $stmt->bind_result($hashedPassword);
+        $stmt->bind_result($id_usuario, $hashedPassword);
         $stmt->fetch();
 
         if (password_verify($contrasena, $hashedPassword)) {
-            // Contraseña correcta, redirigir según el tipo de usuario
+            // ✅ Iniciar sesión exitosamente
+            $_SESSION['id'] = $id_usuario;
+
+            // Redirigir según tipo de usuario
             if (strpos($nombreUsuario, 'U') === 0) {
-                header("Location: ../paginas/FarmaTotal.html"); // Ruta relativa para usuarios
+                header("Location: ../paginas/FarmaTotal.html");
             } elseif (strpos($nombreUsuario, 'A') === 0) {
-                header("Location: ../paginas/Medicamentos.html"); // Ruta relativa para administradores
+                header("Location: ../paginas/Medicamentos.html");
+            } else {
+                header("Location: ../paginas/inicio.html");
             }
             exit();
         } else {
-            // Contraseña incorrecta
-            echo "<p style='color:red; text-align:center;'>Contraseña incorrecta. Inténtelo de nuevo.</p>";
+            $error = "Contraseña incorrecta. Inténtelo de nuevo.";
         }
     } else {
-        // Usuario no encontrado
-        echo "<p style='color:red; text-align:center;'>No estás registrado. Regístrate primero.</p>";
+        $error = "No estás registrado. Regístrate primero.";
     }
 
-    // Cerrar el statement y la conexión
     $stmt->close();
 }
 
 $conn->close();
 ?>
+
