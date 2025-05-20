@@ -24,7 +24,7 @@ if (!$conn->select_db($dbname)) {
         echo "Error al importar base de datos: " . $conn->error;
     }
 }
-
+//pepito
 // Cierra la conexión
 $conn->close();
 ?>
