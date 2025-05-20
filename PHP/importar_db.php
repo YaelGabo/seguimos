@@ -29,5 +29,7 @@ if (!$conexion->select_db($dbname)) {
 if (!$conexion->select_db($dbname)) {
     die("No se pudo seleccionar la base de datos '$dbname'");
 }
-
-// A partir de aquí, $conn está conectado a la BD correcta y lista para usarse
+//pepito
+// Cierra la conexión
+$conn->close();
+?>
